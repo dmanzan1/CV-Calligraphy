@@ -17,6 +17,7 @@ Update May 8th :
   - Diana uploaded a folder called "batch3" into the Final Project Data folder. Didn't have time to sort it out 
     into the different folders yet, but it is at least uploaded all in that one folder.   
 	  - Francis sorted the new batch3 data into different folders and was amazed at how much data 	was added! Also going to add those data into training & testing files 
+	  - Updated the test and train folders for the current test and train letters
 
   - There are also some screenshots of words that I didn't know what to do with for one reason or another, we can discuss later
   - Also I was naming some of the characters based on what they're short for, and didn't realize until later there are two shorthands for "um"??? This is unfortunate :(
