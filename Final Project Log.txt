@@ -10,15 +10,16 @@ Going to try running CNN on the Data we collected
 
 * Next step: have Diana look at the code and add more image processes before running thru CNN agian.   
 
-Update:
+Update May 8th :
 - Diana has looked at image processing, has implemented it correctly :)
 - Code runs, and is likely overfitting, as training accuracy is extremely high, while testing is very low
 - Probably honestly need to collect more data
   - Diana uploaded a folder called "batch3" into the Final Project Data folder. Didn't have time to sort it out 
-    into the different folders yet, but it is at least uploaded all in that one folder. 
-  - There are also some screenshots of words that I didn't know what to do with for one reason or another, we can 
-    discuss later
-  - Also I was naming some of the characters based on what they're short for, and didn't realize until later there
-    are two shorthands for "um"??? This is unfortunate :(
+    into the different folders yet, but it is at least uploaded all in that one folder.   
+	  - Francis sorted the new batch3 data into different folders and was amazed at how much data 	was added! Also going to add those data into training & testing files 
+
+  - There are also some screenshots of words that I didn't know what to do with for one reason or another, we can discuss later
+  - Also I was naming some of the characters based on what they're short for, and didn't realize until later there are two shorthands for "um"??? This is unfortunate :(
+	- Francis: perhaps we should start to sort letters by their appearance 
 - Could look into seeing how we might take the corresponding letter for just one image and output to a text file,
   just so we have the beginnings of how a more well-developed program would work??
