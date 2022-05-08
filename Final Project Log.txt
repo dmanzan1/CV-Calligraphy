@@ -1,0 +1,11 @@
+Collected Data
+
+
+
+Going to try running CNN on the Data we collected 
+- Dividing testing versus training pile
+- Waiting on Diana's Qs
+- Finished wiht 26 classes, got rid of 13 of them to fit the 15 classes limit 
+- Ran CNN which returned around 3% accuracy
+
+* Next step: have Diana look at the code and add more image processes before running thru CNN agian.   

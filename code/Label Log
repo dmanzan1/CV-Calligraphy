@@ -1,0 +1,47 @@
+________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ block1_conv1 (Conv2D)       multiple                  1792      
+                                                                 
+ block1_pool (MaxPooling2D)  multiple                  0         
+                                                                 
+ dropout (Dropout)           multiple                  0         
+                                                                 
+ block2_conv1 (Conv2D)       multiple                  73856     
+                                                                 
+ block2_conv2 (Conv2D)       multiple                  147584    
+                                                                 
+ block2_pool (MaxPooling2D)  multiple                  0         
+                                                                 
+ dropout_1 (Dropout)         multiple                  0         
+                                                                 
+ block3_conv1 (Conv2D)       multiple                  295168    
+                                                                 
+ block3_conv2 (Conv2D)       multiple                  590080    
+                                                                 
+ block3_conv3 (Conv2D)       multiple                  590080    
+                                                                 
+ block3_pool (MaxPooling2D)  multiple                  0         
+                                                                 
+ dropout_2 (Dropout)         multiple                  0         
+                                                                 
+ block4_conv1 (Conv2D)       multiple                  1180160   
+                                                                 
+ block4_conv2 (Conv2D)       multiple                  2359808   
+                                                                 
+ block4_conv3 (Conv2D)       multiple                  2359808   
+                                                                 
+ block4_pool (MaxPooling2D)  multiple                  0         
+                                                                 
+ dropout_3 (Dropout)         multiple                  0         
+                                                                 
+ flatten (Flatten)           multiple                  0         
+                                                                 
+ dense (Dense)               multiple                  6422592   
+                                                                 
+ dense_1 (Dense)             multiple                  975       
+                                                                 
+=================================================================
+Total params: 14,021,903
+Trainable params: 14,021,903
+Non-trainable params: 0
