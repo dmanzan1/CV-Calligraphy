@@ -9,3 +9,10 @@ Going to try running CNN on the Data we collected
 - Ran CNN which returned around 3% accuracy
 
 * Next step: have Diana look at the code and add more image processes before running thru CNN agian.   
+
+Update:
+- Diana has looked at image processing, has implemented it correctly :)
+- Code runs, and is likely overfitting, as training accuracy is extremely high, while testing is very low
+- Probably honestly need to collect more data
+- Could look into seeing how we might take the corresponding letter for just one image and output to a text file,
+  just so we have the beginnings of how a more well-developed program would work??
