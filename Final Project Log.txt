@@ -24,3 +24,10 @@ Update May 8th :
 	- Francis: perhaps we should start to sort letters by their appearance 
 - Could look into seeing how we might take the corresponding letter for just one image and output to a text file,
   just so we have the beginnings of how a more well-developed program would work??
+
+
+
+Turns out though the hyper parameters said that there were 15 classes, only 13 classes were there. Added 2 classes and training and test data, and the accuracy 
+
+The next challenge: figure out how to increase the number of classes being trained 
+- In our research, we were told that it was not a good idea to have too many classes, but we tried it anyways. We tried changing the parameters and eventually 

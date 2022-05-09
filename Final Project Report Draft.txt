@@ -1,0 +1,38 @@
+Topics to cover:
+- the difficult of sample data collection 
+
+
+
+
+First Goal:
+- used to want to get 
+
+
+First research phase:
+- Code Research
+- Calligrpahy research
+
+Second goal:
+- Narrowed down to one type of calligraphy
+
+Second research phase
+
+
+
+Implementation phase Challenges:
+- Data collection
+	- 
+- Data 
+- Running time
+	- the  
+- normalization and standardization 
+	- letters were of different sizes and so were the images,
+	- we had used the standardization function of the CNN as we implemented in Project 5, however, that did not help. 
+	- we devised a normalization function
+	- 
+
+- Tuning parameters 
+
+- Overfitting 
+	- for a long time we had a drastic overfitting issue, and we tried two different things to address it 
+	- 
