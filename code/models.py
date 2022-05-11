@@ -37,6 +37,6 @@ class YourModel(tf.keras.Model):
 
     @staticmethod
     def loss_fn(labels, predictions):
-        """ Loss function for the model. """]
+        """ Loss function for the model. """
         return tf.keras.losses.sparse_categorical_crossentropy(labels, predictions)
 
