@@ -35,7 +35,7 @@ class ImageLabelingLogger(tf.keras.callbacks.Callback):
         super(ImageLabelingLogger, self).__init__()
 
         self.datasets = datasets
-        self.task = datasets.task
+        
         self.logs_path = logs_path
 
         print("Done setting up image labeling logger.")
@@ -62,21 +62,10 @@ class ImageLabelingLogger(tf.keras.callbacks.Callback):
                 probabilities = self.model(np.array([image])).numpy()[0]
                 predict_class_idx = np.argmax(probabilities)
 
-                if self.task == '1':
-                    image = np.clip(image, 0., 1.)
-                    plt.imshow(image, cmap='gray')
-                else:
-                    # Undo VGG preprocessing
-                    mean = [103.939, 116.779, 123.68]
-                    image[..., 0] += mean[0]
-                    image[..., 1] += mean[1]
-                    image[..., 2] += mean[2]
-                    image = image[:, :, ::-1]
-                    image = image / 255.
-                    image = np.clip(image, 0., 1.)
-
-                    plt.imshow(image)
-
+                
+                image = np.clip(image, 0., 1.)
+                plt.imshow(image, cmap='gray')
+            
                 is_correct = correct_class_idx == predict_class_idx
 
                 title_color = 'g' if is_correct else 'r'
@@ -191,11 +180,10 @@ class ConfusionMatrixLogger(tf.keras.callbacks.Callback):
 class CustomModelSaver(tf.keras.callbacks.Callback):
     """ Custom Keras callback for saving weights of networks. """
 
-    def __init__(self, checkpoint_dir, task, max_num_weights=5):
+    def __init__(self, checkpoint_dir, max_num_weights=5):
         super(CustomModelSaver, self).__init__()
 
         self.checkpoint_dir = checkpoint_dir
-        self.task = task
         self.max_num_weights = max_num_weights
 
     def on_epoch_end(self, epoch, logs=None):
@@ -212,13 +200,8 @@ class CustomModelSaver(tf.keras.callbacks.Callback):
             save_name = "weights.e{0:03d}-acc{1:.4f}.h5".format(
                 epoch, cur_acc)
 
-            if self.task == '1':
-                self.model.save_weights(
+            self.model.save_weights(
                     self.checkpoint_dir + os.sep + "your." + save_name)
-            else:
-                # Only save weights of classification head of VGGModel
-                self.model.head.save_weights(
-                    self.checkpoint_dir + os.sep + "vgg." + save_name)
 
             # Ensure max_num_weights is not exceeded by removing
             # minimum weight

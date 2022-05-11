@@ -1,4 +1,6 @@
 """
+File layout modelled after:
+
 Homework 5 - CNNs
 CS1430 - Computer Vision
 Brown University
@@ -9,14 +11,14 @@ Number of epochs. If you experiment with more complex networks you
 might need to increase this. Likewise if you add regularization that
 slows training.
 """
-num_epochs = 50
+num_epochs = 30
 
 """
 A critical parameter that can dramatically affect whether training
 succeeds or fails. The value for this depends significantly on which
 optimizer is used. Refer to the default learning rate parameter
 """
-learning_rate = 1e-4
+learning_rate = 1e-3
 
 """
 Momentum on the gradient (if you use a momentum-based optimizer)
@@ -24,15 +26,14 @@ Momentum on the gradient (if you use a momentum-based optimizer)
 momentum = 0.01
 
 """
-Resize image size for task 1. Task 3 must have an image size of 224,
-so that is hard-coded elsewhere.
+Resize image size as preprocessing.
 """
 img_height = 242
 img_width = 200
 
 """
 Sample size for calculating the mean and standard deviation of the
-training data. This many images will be randomly seleted to be read
+training data. This many images will be randomly selected to be read
 into memory temporarily.
 """
 preprocess_sample_size = 400
@@ -48,13 +49,9 @@ max_num_weights = 5
 Defines the number of training examples per batch.
 You don't need to modify this.
 """
-batch_size = 5
+batch_size = 30
 
 """
 The number of image scene classes. Don't change this.
 """
-num_classes = 15
-
-#checkpoints/vgg_model/041522-055644/vgg.weights.e021-acc0.8891.h5
-#python run.py --task 3 --data ../data --load-checkpoint checkpoints/vgg_model/041522-055644/vgg.weights.e021-acc0.8891.h5 --evaluate 
-#python run.py --task 1 --data ../data --load-checkpoint checkpoints-task1/your_model/041522-050042/your.weights.e041-acc0.6864.h5 --evaluate 
+num_classes = 29

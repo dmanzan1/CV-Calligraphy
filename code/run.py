@@ -1,4 +1,6 @@
 """
+File layout modelled after:
+
 Homework 5 - CNNs
 CS1430 - Computer Vision
 Brown University
@@ -9,7 +11,10 @@ import sys
 import argparse
 import re
 from datetime import datetime
+from skimage import io
 import tensorflow as tf
+from tensorflow.python.ops.gen_array_ops import Slice
+
 
 import hyperparameters as hp
 from models import YourModel
@@ -17,6 +22,7 @@ from preprocess import Datasets
 from skimage.transform import resize
 from tensorboard_utils import \
         ImageLabelingLogger, ConfusionMatrixLogger, CustomModelSaver
+from read_img import recognize
 
 from skimage.io import imread
 from skimage.segmentation import mark_boundaries
@@ -32,21 +38,11 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Let's train some neural nets!",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument(
-        '--task',
-        required=True,
-        choices=['1', '3'],
-        help='''Which task of the assignment to run -
-        training from scratch (1), or fine tuning VGG-16 (3).''')
+    
     parser.add_argument(
         '--data',
         default='..'+os.sep+'data'+os.sep,
         help='Location where the dataset is stored.')
-    parser.add_argument(
-        '--load-vgg',
-        default='vgg16_imagenet.h5',
-        help='''Path to pre-trained VGG-16 file (only applicable to
-        task 3).''')
     parser.add_argument(
         '--load-checkpoint',
         default=None,
@@ -70,109 +66,13 @@ def parse_args():
         '--lime-image',
         default='test/Bedroom/image_0003.jpg',
         help='''Name of an image in the dataset to use for LIME evaluation.''')
+    parser.add_argument(
+        '--read',
+        default= None,
+        help=''' --read path/of/image ''')
+    
 
     return parser.parse_args()
-
-
-# def LIME_explainer(model, path, preprocess_fn):
-#     """
-#     This function takes in a trained model and a path to an image and outputs 5
-#     visual explanations using the LIME model
-#     """
-
-#     def image_and_mask(title, positive_only=True, num_features=5,
-#                        hide_rest=True):
-#         temp, mask = explanation.get_image_and_mask(
-#             explanation.top_labels[0], positive_only=positive_only,
-#             num_features=num_features, hide_rest=hide_rest)
-#         plt.imsave("image1.", mark_boundaries(temp / 2 + 0.5, mask))
-#         plt.title(title)
-#         plt.show()
-
-#     image = imread(path)
-#     if len(image.shape) == 2:
-#         image = np.stack([image, image, image], axis=-1)
-#     image = resize(image, (hp.img_size, hp.img_size, 3))
-#     image = preprocess_fn(image)
-
-#     explainer = lime_image.LimeImageExplainer()
-
-#     explanation = explainer.explain_instance(
-#         image.astype('double'), model.predict, top_labels=5, hide_color=0,
-#         num_samples=1000)
-
-#     # The top 5 superpixels that are most positive towards the class with the
-#     # rest of the image hidden
-#     image_and_mask("Top 5 superpixels", positive_only=True, num_features=5,
-#                    hide_rest=True)
-
-#     # The top 5 superpixels with the rest of the image present
-#     image_and_mask("Top 5 with the rest of the image present",
-#                    positive_only=True, num_features=5, hide_rest=False)
-
-#     # The 'pros and cons' (pros in green, cons in red)
-#     image_and_mask("Pros(green) and Cons(red)",
-#                    positive_only=False, num_features=10, hide_rest=False)
-
-#     # Select the same class explained on the figures above.
-#     ind = explanation.top_labels[0]
-#     # Map each explanation weight to the corresponding superpixel
-#     dict_heatmap = dict(explanation.local_exp[ind])
-#     heatmap = np.vectorize(dict_heatmap.get)(explanation.segments)
-#     plt.imshow(heatmap, cmap='RdBu', vmin=-heatmap.max(), vmax=heatmap.max())
-#     plt.colorbar()
-#     plt.title("Map each explanation weight to the corresponding superpixel")
-#     plt.show()
-
-# def LIME_explainer(model, path, preprocess_fn):
-#     """
-#     This function takes in a trained model and a path to an image and outputs 5
-#     visual explanations using the LIME model
-#     """
-
-#     def image_and_mask(title, positive_only=True, num_features=5,
-#                        hide_rest=True, path=path):
-#         temp, mask = explanation.get_image_and_mask(
-#             explanation.top_labels[0], positive_only=positive_only,
-#             num_features=num_features, hide_rest=hide_rest)
-#         x = mark_boundaries(temp / 2 + 0.5, mask)
-#         arr = np.array((x - np.min(x)) / (np.max(x) - np.min(x)))
-#         plt.imsave(fname=path, arr=arr)
-
-
-#     # Read the image and preprocess it as before
-#     image = imread(path)
-#     if len(image.shape) == 2:
-#         image = np.stack([image, image, image], axis=-1)
-#     image = resize(image, (hp.img_height, hp.img_width, 3), preserve_range=True)
-#     image = preprocess_fn(image)
-
-
-#     explainer = lime_image.LimeImageExplainer()
-
-#     explanation = explainer.explain_instance(
-#         image.astype('double'), model.predict, top_labels=5, hide_color=0,
-#         num_samples=1000)
-
-#     # The top 5 superpixels that are most positive towards the class with the
-#     # rest of the image hidden
-#     image_and_mask("Top 5 superpixels", positive_only=True, num_features=5,
-#                    hide_rest=True, path="top5superpixels.png")
-
-#     # The top 5 superpixels with the rest of the image present
-#     image_and_mask("Top 5 with the rest of the image present",
-#                    positive_only=True, num_features=5, hide_rest=False, path="top5withrestofimage.png")
-
-#     # The 'pros and cons' (pros in green, cons in red)
-#     image_and_mask("Pros(green) and Cons(red)",
-#                    positive_only=False, num_features=10, hide_rest=False, path="prosandcons.png")
-
-#     # Select the same class explained on the figures above.
-#     ind = explanation.top_labels[0]
-#     # Map each explanation weight to the corresponding superpixel
-#     dict_heatmap = dict(explanation.local_exp[ind])
-#     heatmap = np.vectorize(dict_heatmap.get)(explanation.segments)
-#     plt.imsave(fname="mapweighttosuperpixel.png", arr=heatmap, cmap='RdBu', vmin=-heatmap.max(), vmax=heatmap.max())
 
 
 def train(model, datasets, checkpoint_path, logs_path, init_epoch):
@@ -185,7 +85,8 @@ def train(model, datasets, checkpoint_path, logs_path, init_epoch):
             update_freq='batch',
             profile_batch=0),
         ImageLabelingLogger(logs_path, datasets),
-        CustomModelSaver(checkpoint_path, ARGS.task, hp.max_num_weights)
+        CustomModelSaver(checkpoint_path, hp.max_num_weights) 
+        # ^ the "1" used to be ARGS.task
     ]
 
     # Include confusion logger in callbacks if flag set
@@ -212,6 +113,8 @@ def test(model, test_data):
         verbose=1,
     )
 
+# def test_per_letter(model, data):
+
 
 def main():
     """ Main function. """
@@ -222,7 +125,8 @@ def main():
 
     # If loading from a checkpoint, the loaded checkpoint's directory
     # will be used for future checkpoints
-    if ARGS.load_checkpoint is not None:
+    if ARGS.load_checkpoint is not None: 
+        # For when we want to use the fully trained model:
         ARGS.load_checkpoint = os.path.abspath(ARGS.load_checkpoint)
 
         # Get timestamp and epoch from filename
@@ -230,20 +134,15 @@ def main():
         init_epoch = int(re.match(regex, ARGS.load_checkpoint).group(1)) + 1
         timestamp = os.path.basename(os.path.dirname(ARGS.load_checkpoint))
 
-    # If paths provided by program arguments are accurate, then this will
-    # ensure they are used. If not, these directories/files will be
-    # set relative to the directory of run.py
+    # If argument paths are accurate, this ensures they're used
+    # If not, these directories/files are set relative to directory of run.py
     if os.path.exists(ARGS.data):
         ARGS.data = os.path.abspath(ARGS.data)
-    if os.path.exists(ARGS.load_vgg):
-        ARGS.load_vgg = os.path.abspath(ARGS.load_vgg)
 
-    # Run script from location of run.py
     os.chdir(sys.path[0])
 
-    datasets = Datasets(ARGS.data, ARGS.task)
+    datasets = Datasets(ARGS.data)
 
-    # if ARGS.task == '1':
     model = YourModel()
     model(tf.keras.Input(shape=(hp.img_height, hp.img_width, 3)))
     checkpoint_path = "checkpoints" + os.sep + \
@@ -253,28 +152,31 @@ def main():
 
     # Print summary of model
     model.summary()
-    # else:
-    #     model = VGGModel()
-    #     checkpoint_path = "checkpoints" + os.sep + \
-    #         "vgg_model" + os.sep + timestamp + os.sep
-    #     logs_path = "logs" + os.sep + "vgg_model" + \
-    #         os.sep + timestamp + os.sep
-    #     model(tf.keras.Input(shape=(224, 224, 3)))
 
-    #     # Print summaries for both parts of the model
-    #     model.vgg16.summary()
-    #     model.head.summary()
-
-    #     # Load base of VGG model
-    #     model.vgg16.load_weights(ARGS.load_vgg, by_name=True)
 
     # Load checkpoints
     if ARGS.load_checkpoint is not None:
-        if ARGS.task == '1':
-            model.load_weights(ARGS.load_checkpoint, by_name=False)
-        else:
-            model.head.load_weights(ARGS.load_checkpoint, by_name=False)
+        model.load_weights(ARGS.load_checkpoint, by_name=False)
+    
+    if ARGS.read is not None: 
+          parsed = recognize(io.imread(ARGS.read), hp.img_height, hp.img_width)
 
+          prediction = []
+          for slice in parsed:     
+            slice = [slice, slice, slice]
+            slice = tf.reshape(slice, (1, hp.img_height, hp.img_width, 3))
+            
+            probs = model.predict(slice)
+            label = np.argmax(np.array(probs))
+
+            prediction.append(datasets.idx_to_class[label])
+          
+          final_word = ""
+          for letter in prediction:
+            final_word += letter
+
+          print(final_word)
+    
     # Make checkpoint directory if needed
     if not ARGS.evaluate and not os.path.exists(checkpoint_path):
         os.makedirs(checkpoint_path)
@@ -287,15 +189,9 @@ def main():
 
     if ARGS.evaluate:
         test(model, datasets.test_data)
-
-        # TODONE: change the image path to be the image of your choice by changing
-        # the lime-image flag when calling run.py to investigate
-        # i.e. python run.py --evaluate --lime-image test/Bedroom/image_003.jpg
         path = ARGS.data + os.sep + ARGS.lime_image
-        # LIME_explainer(model, path, datasets.preprocess_fn)
-    else:
+    elif not ARGS.read:
         train(model, datasets, checkpoint_path, logs_path, init_epoch)
-
 
 
 # Make arguments global
